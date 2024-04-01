@@ -1,4 +1,5 @@
 import asyncio
+import math
 import discord
 import aiohttp
 import io
@@ -15,12 +16,20 @@ class Webhook():
     async def asyncio_send_bytes(self, file_bytes: bytes, filename: str) -> str:
         async with aiohttp.ClientSession() as session:
             try:
-                filesize = (len(file_bytes))
-                print(cdn.format_filesize(filesize))
                 webhook = discord.Webhook.from_url(self.url, session=session)
-                file = discord.File(fp=io.BytesIO(file_bytes), filename=filename)
-                message: discord.Message = await webhook.send(f"Uploaded file: {filename}", file=file, username='CLOUD', wait=True)
-                return str(message.attachments[0])
+                filesize = (len(file_bytes))
+                if filesize > (3.5 * 1000 * 1000):
+                    messages = []
+                    parts_count = math.ceil(filesize / (3.5 * 1000 * 1000))
+                    for part in range(parts_count):
+                        file = discord.File(fp=io.BytesIO(file_bytes[int(3.5 * 1000 * 1000 * part):int(3.5 * 1000 * 1000 * (part+1))]), filename=f"{filename}_{part}.txt")
+                        message: discord.Message = await webhook.send(f"Uploaded file: {filename}_{part}.txt", file=file, username='CLOUD', wait=True)
+                        messages.append(str(message.attachments[0]))
+                    return str(messages)
+                else:
+                    file = discord.File(fp=io.BytesIO(file_bytes), filename=f"{filename}.txt")
+                    message: discord.Message = await webhook.send(f"Uploaded file: {filename}.txt", file=file, username='CLOUD', wait=True)
+                    return str(message.attachments[0])
             except Exception as e:
                 return (str(e))
     

@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, render_template
 from api.webhook import Webhook
 
@@ -11,4 +12,6 @@ def index():
 @app.route("/api/upload", methods=["GET", "POST"])
 def upload():
     file = request.files["file"]
-    return hook.send_bytes(file_bytes=file.stream.read(), filename=file.filename)
+    return hook.send_bytes(file_bytes=file.stream.read(), filename=os.path.splitext(file.filename)[0])
+
+app.run(debug=True, port=80)

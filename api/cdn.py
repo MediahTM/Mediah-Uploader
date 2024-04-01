@@ -9,8 +9,8 @@ def renew_link(url: str) -> str:
 def format_filesize(filesize: int) -> str:
     sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB"]
     for size in sizes:
-        if filesize / 1000 > 1:
-            filesize /= 1000
+        if filesize / 1024 > 1:
+            filesize /= 1024
         else:
             break
     return f"{round(filesize, 2)} {size}"
