@@ -1,8 +1,14 @@
+from flask import Flask, request, render_template
 from api.webhook import Webhook
-import api.cdn as cdn
 
+app = Flask(__name__)
 hook = Webhook(url="https://discord.com/api/webhooks/1224099792335015936/mtKNdsa5rW49vCEBW2htgdJSeLZF2nr-Y2viblSM4zVYXfXn9Wd98GhzGzG6s9qWcNQl")
 
-file = hook.send_file(r"C:\users\samue\Downloads\CTK\edit_dark.gif", "rb")
+@app.route("/")
+def index():
+    return render_template("index.html")
 
-print(file)
+@app.route("/api/upload", methods=["GET", "POST"])
+def upload():
+    file = request.files["file"]
+    return hook.send_bytes(file_bytes=file.stream.read(), filename=file.filename)
