@@ -12,5 +12,3 @@ def index():
 def upload():
     file = request.files["file"]
     return hook.send_bytes(file_bytes=file.stream.read(), filename=file.filename)
-
-app.run(debug=True, port=80)
