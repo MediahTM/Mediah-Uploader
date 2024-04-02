@@ -1,0 +1,31 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <script src="https://cdn.filesizejs.com/filesize.min.js" defer></script>
+    <script>console.clear();console.log("Mediah Local Initialized...")</script>
+    <style>*{font-family: "Inter", sans-serif;color-scheme: dark !important;}</style>
+    <title>Mediah</title>
+</head>
+<body class="flex h-screen flex-col text-white bg-zinc-900" id="dropContainer" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+    <div class="flex h-screen justify-center items-center">
+    <div class="p-4 border-2 flex flex-col items-center justify-center gap-1 border-dashed border-zinc-700 rounded-md">
+        <h1 class="text-4xl">Mediah Downloader</h1>
+        <div class="flex items-center mt-2">
+            <p id="browseText" class="px-2">Drag and drop JSON file or</p>
+            <label id="browseButton" class="border-none w-fit outline-none rounded-full bg-zinc-700 text-white text-base py-2 px-4 h-11 cursor-pointer hover:bg-zinc-600 transition-all" for="browse">Browse</label>
+        </div>
+        <input type="file" class="hidden" id="browse" name="file">
+        <input type="text" id="file_name" hidden name="file_name">
+        <div id="fileNameContainer" class="flex items-center" hidden>
+            <p id="fileName" class="mb-1 px-1" hidden></p>
+            <label id="fileEditButton" class="border-none w-fit outline-none rounded-full bg-zinc-700 text-white text-base py-2 px-4 h-11 cursor-pointer hover:bg-zinc-600 transition-all" hidden for="browse">Edit</label>
+        </div>
+        <button id="download" onclick="download();" class="border-none w-fit outline-none rounded-full bg-zinc-700 text-white text-base py-2 px-4 h-11 cursor-pointer hover:bg-zinc-600 transition-all" hidden>Download!</button>
+        <script src="{{ url_for('static', filename='file_download.js' )}}" defer></script>
+    </div>
+    </div>
+</body>
+</html>

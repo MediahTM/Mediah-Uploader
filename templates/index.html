@@ -1,22 +1,11 @@
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <title>Mediah</title>
+    <title>THIS IS TEMPORARY</title>
 </head>
-<body class="bg-zinc-900 text-white" id="dropContainer" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
-    <h1>Cool Uploader</h1>
-    <label class="border-none outline-none rounded-full bg-zinc-700 text-white py-2 px-4 h-11 mr-2 cursor-pointer hover:bg-zinc-700/75 transition-all" for="upload">Browse</label>
-    <input type="file" class="hidden" id="upload" name="file">
-    <input type="text" id="file_name" hidden name="file_name">
-    <p id="fileName"></p>
-    <button onclick="upload();" class="h-11 text-sm sm:mt-0 mt-4 px-4 bg-zinc-700 rounded-full text-white">Upload!</button>
-    <form action="{{ url_for('download') }}" method="POST" enctype="multipart/form-data">
-        <input type="file" name="download">
-        <button>Download!</button>
-    </form>
-    <script src="{{ url_for('static', filename='file_upload.js' )}}"></script>
-    </div>
+<body>
+    <h1>This is temporary i swear</h1>
+    <a href="/upload">CLICK ME FOR UPLOAD</a>
+    <a href="/download">CLICK ME FOR DOWNLOAD</a>
 </body>
-</html>
+<html>

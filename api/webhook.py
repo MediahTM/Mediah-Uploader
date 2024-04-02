@@ -36,7 +36,7 @@ class Webhook():
                 }
                 json_file = discord.File(fp=io.BytesIO(json.dumps(json_to_send, indent=4).encode()), filename=base64.b64encode(filebasename.encode('utf-8')).decode('utf-8')[:56]+".json")
                 await webhook.send(content=f"{filename} has been fully uploaded using Mediah!", file=json_file, embed=discord.Embed(title="Download Mediah now and get unlimited storage!", url="https://github.com/MediahTM/Mediah-Local/", description="Mediah offers completely free unlimited cloud storage courtesy of Discord! We have a wide variety of music, movies and more all hosted using Discord avaliable for download!").set_image(url="https://avatars.githubusercontent.com/u/165603488?s=48&v=4"))
-                return send_file(io.BytesIO(json.dumps(json_to_send, indent=4).encode()), download_name=base64.b64encode(filebasename.encode('utf-8')).decode('utf-8')[:56]+".json", as_attachment=True)
+                return send_file(path_or_file=io.BytesIO(json.dumps(json_to_send, indent=4).encode()), download_name=base64.b64encode(filebasename.encode('utf-8')).decode('utf-8')[:56]+".json", as_attachment=True)
             except Exception as e:
                 return (str(e))
     

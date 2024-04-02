@@ -30,10 +30,13 @@ def format_filesize(filesize: int) -> str:
             break
     return f"{round(filesize, 2)} {size}"
 
-def download_links(data):
-    json_data = json.loads(data.read())
+def download_links(data: str|dict|bytes):
+    if type(data) == str:
+        data = json.loads(data)
+    elif type(data) == bytes:
+        data = json.loads(data.decode())
     file = b""
-    for chunk in json_data["parts"]:
+    for chunk in data["parts"]:
         response = requests.get(cdn.renew_link(chunk))
         file += response.content
-    return send_file(io.BytesIO(file), download_name=json_data["filename"], as_attachment=True)
+    return send_file(io.BytesIO(file), download_name=data["filename"], as_attachment=True)
