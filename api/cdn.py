@@ -1,5 +1,9 @@
+import io
+import json
 import requests
 import config
+from flask import send_file
+
 def strip_link(url: str) -> str:
     return str(url).split("?")[0].split("#")[0]
 
@@ -14,3 +18,11 @@ def format_filesize(filesize: int) -> str:
         else:
             break
     return f"{round(filesize, 2)} {size}"
+
+def download_links(data):
+    json_data = json.loads(data.read())
+    file = b""
+    for chunk in json_data["parts"]:
+        response = requests.get(chunk)
+        file += response.content
+    return send_file(io.BytesIO(file), download_name=json_data["filename"], as_attachment=True)

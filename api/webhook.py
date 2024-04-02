@@ -1,10 +1,14 @@
 import asyncio
+import json
 import math
 import discord
 import aiohttp
 import io
 import os
+import config
 from api import cdn
+from flask import send_file
+import base64
 
 class Webhook():
     def __init__(self, url: str):
@@ -16,20 +20,23 @@ class Webhook():
     async def asyncio_send_bytes(self, file_bytes: bytes, filename: str) -> str:
         async with aiohttp.ClientSession() as session:
             try:
+                filebasename = os.path.splitext(filename)[0]
                 webhook = discord.Webhook.from_url(self.url, session=session)
                 filesize = (len(file_bytes))
-                if filesize > (3.5 * 1000 * 1000):
-                    messages = []
-                    parts_count = math.ceil(filesize / (3.5 * 1000 * 1000))
-                    for part in range(parts_count):
-                        file = discord.File(fp=io.BytesIO(file_bytes[int(3.5 * 1000 * 1000 * part):int(3.5 * 1000 * 1000 * (part+1))]), filename=f"{filename}_{part}.txt")
-                        message: discord.Message = await webhook.send(f"Uploaded file: {filename}_{part}.txt", file=file, username='CLOUD', wait=True)
-                        messages.append(str(message.attachments[0]))
-                    return str(messages)
-                else:
-                    file = discord.File(fp=io.BytesIO(file_bytes), filename=f"{filename}.txt")
-                    message: discord.Message = await webhook.send(f"Uploaded file: {filename}.txt", file=file, username='CLOUD', wait=True)
-                    return str(message.attachments[0])
+                messages = []
+                parts_count = math.ceil(filesize / config.MAX_CHUNK_SIZE)
+                for part in range(1, parts_count+1):
+                    file = discord.File(fp=io.BytesIO(file_bytes[int(config.MAX_CHUNK_SIZE * (part-1)):int(config.MAX_CHUNK_SIZE * (part))]), filename=f"{base64.b64encode(filebasename.encode('utf-8')).decode('utf-8')[:56]}_{part}.txt")
+                    message: discord.Message = await webhook.send(f"Uploaded file: {base64.b64encode(filebasename.encode('utf-8')).decode('utf-8')[:56]}_{part}.txt (Part {part}/{parts_count})", file=file, username='CLOUD', wait=True)
+                    messages.append(cdn.strip_link(str(message.attachments[0])))
+                json_to_send = {
+                    "parts": messages,
+                    "filename": filename,
+                    "size": filesize
+                }
+                json_file = discord.File(fp=io.BytesIO(json.dumps(json_to_send, indent=4).encode()), filename=base64.b64encode(filebasename.encode('utf-8')).decode('utf-8')[:56]+".json")
+                await webhook.send(content=f"{filename} has been fully uploaded using Mediah!", file=json_file, embed=discord.Embed(title="Download Mediah now and get unlimited storage!", url="https://github.com/MediahTM/Mediah-Local/", description="Mediah offers completely free unlimited cloud storage courtesy of Discord! We have a wide variety of music, movies and more all hosted using Discord avaliable for download!").set_image(url="https://avatars.githubusercontent.com/u/165603488?s=48&v=4"))
+                return send_file(io.BytesIO(json.dumps(json_to_send, indent=4).encode()), download_name=base64.b64encode(filebasename.encode('utf-8')).decode('utf-8')[:56]+".json", as_attachment=True)
             except Exception as e:
                 return (str(e))
     
