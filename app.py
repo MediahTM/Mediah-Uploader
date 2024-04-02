@@ -13,8 +13,9 @@ def index():
 
 @app.route("/api/upload", methods=["GET", "POST"])
 def upload():
-    file = request.files["upload"]
-    return hook.send_bytes(file_bytes=file.stream.read(), filename=file.filename)
+    data = request.data
+    data = cdn.process_file_data(data)
+    return hook.send_bytes(file_bytes=data["file_bytes"], filename=data["filename"])
 
 @app.route("/api/download", methods=["GET", "POST"])
 def download():
