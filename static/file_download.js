@@ -26,7 +26,7 @@ function download() {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
                 readFile(file).then(contents => {
-                    downloadFile(base64DecodeToBytes(xhr.response), JSON.parse(contents)["filename"], "image/png")
+                    downloadFile(base64DecodeToBytes(xhr.response), JSON.parse(contents)["filename"], "application/octet-stream")
                 });
             } else {
                 console.error('Request failed: ' + xhr.status);
