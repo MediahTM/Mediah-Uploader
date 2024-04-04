@@ -99,3 +99,17 @@ function base64DecodeToBytes(base64String) {
     }
     return bytes;
 }
+function updateProgressBar(progress) {
+    document.getElementById("progress-container").hidden = false;
+    document.getElementById("progress").style.width = progress * 2.5;
+    document.getElementById("progress-text").textContent = String(Math.round(progress)) + "%"
+    if (progress >= 100) {
+        document.getElementById("progress-container").hidden = true;
+    }
+    if (progress <= 10) {
+        document.getElementById("progress-text").textContent = "";
+    }
+    if (progress <= 1) {
+        document.getElementById("progress").style.width = 0;
+    }
+}
