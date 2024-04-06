@@ -25,7 +25,7 @@
             <p id="fileName" class="mb-1 px-1" hidden></p>
             <label id="fileEditButton" class="border-none w-fit outline-none rounded-full bg-zinc-700 text-white text-base py-2 px-4 h-11 cursor-pointer hover:bg-zinc-600 transition-all" hidden for="browse">Edit</label>
         </div>
-        <button id="upload" onclick="upload();" class="border-none w-fit outline-none rounded-full bg-zinc-700 text-white text-base py-2 px-4 h-11 cursor-pointer hover:bg-zinc-600 transition-all" hidden>Upload!</button>
+        <button id="upload" onclick="processFile();" class="border-none w-fit outline-none rounded-full bg-zinc-700 text-white text-base py-2 px-4 h-11 cursor-pointer hover:bg-zinc-600 transition-all" hidden>Upload!</button>
         <script src="{{ url_for('static', filename='file_upload.js' )}}" defer></script>
     </div>
     </div>
