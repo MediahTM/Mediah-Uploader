@@ -67,9 +67,9 @@ async function upload(chunk, fileName, chunks, currentChunk) {
     const response = await fetch("https://discord.com/api/webhooks/1224099792335015936/mtKNdsa5rW49vCEBW2htgdJSeLZF2nr-Y2viblSM4zVYXfXn9Wd98GhzGzG6s9qWcNQl", {"method": "POST", "body": formData});
     if (response.ok) {
         const responseText = await response.text();
-        const attachment_url = JSON.parse(responseText)["attachments"][0]["url"];
+        const attachment_url = JSON.parse(responseText)["attachments"][0]["url"].split("?")[0]
         console.log(attachment_url);
-        return attachment_url
+        return {url: attachment_url, size: chunk.length}
     }
 }
 document.getElementById('browse').addEventListener('change', function() {

@@ -113,3 +113,46 @@ function updateProgressBar(progress) {
         document.getElementById("progress").style.width = 0;
     }
 }
+async function fetchAndDecode(url) {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+    });
+}
+
+async function processData() {
+    fileJson = JSON.parse(await readFile(file))
+    fullFile = new Uint8Array(0)
+    urls = fileJson["parts"]
+    for (var item = 0; item < urls.length; item++) {
+        console.log(urls[item]["url"]);
+        file = ""
+        for (var mb_chunk = 0; mb_chunk < urls[item]["size"]; mb_chunk += 4000000) {
+            if ((mb_chunk + 4000000) > urls[item]["size"]) {
+                end = urls[item]["size"]
+            } else {
+                end = mb_chunk + 4000000
+            }
+            response = await fetch(`/api/download/${urls[item]["url"]}?start=${String(mb_chunk)}&end=${String(end)}`)
+            body = await response.text()
+            file += body
+            console.log(body)
+        }
+        fullFile = appendBase64ToBytesArray(file, fullFile)
+    }
+    downloadFile(fullFile, fileJson["filename"], "application/octet-stream")
+}
+function appendBase64ToBytesArray(base64String, uint8Array) {
+    const binaryString = atob(base64String);
+    const newArray = new Uint8Array(uint8Array.length + binaryString.length);
+    newArray.set(uint8Array);
+    for (let i = 0; i < binaryString.length; i++) {
+        newArray[uint8Array.length + i] = binaryString.charCodeAt(i);
+    }
+    
+    return newArray;
+}

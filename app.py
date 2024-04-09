@@ -1,6 +1,7 @@
 import base64
 import os
 from flask import Flask, request, render_template, send_file
+import requests
 from api.webhook import Webhook
 from api import cdn
 import io
@@ -26,10 +27,21 @@ def upload():
     data = cdn.process_file_data(data)
     return hook.send_bytes(file_bytes=base64.b64encode(data["file_bytes"]), filename=data["filename"])
 
-@app.route("/api/download", methods=["GET", "POST"])
-def download():
-    data = request.data
-    data = cdn.process_file_data(data)
-    return cdn.download_links(data["file_bytes"])
+@app.route("/api/download/<path:url>", methods=["GET"])
+def download(url):
+    try:
+        start = request.args.get("start")
+        end = str(int(request.args.get("end"))-1)
+        headers = {'Range': f'bytes={start}-{end}'}
+        if start and end:
+            response = requests.get(cdn.renew_link(url), headers=headers)
+            if response.status_code == 206:
+                return response.content
+            else:
+                return (f"Error: {response.status_code} - {response.reason}")
+        else:
+            return "Add start/end arguments!"
+    except:
+        return "Add start/end arguments!"
 
 app.run(debug=True, port=80)
