@@ -14,26 +14,6 @@ function dropHandler(ev) {
         });
     }
 }
-function download() {
-    console.log(file)
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "/api/download", true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    var formData = new FormData();
-    formData.append("file", file);
-    xhr.send(formData)
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-            if (xhr.status === 200) {
-                readFile(file).then(contents => {
-                    downloadFile(base64DecodeToBytes(xhr.response), JSON.parse(contents)["filename"], "application/octet-stream")
-                });
-            } else {
-                console.error('Request failed: ' + xhr.status);
-        }
-    }
-}
-}
 document.getElementById('browse').addEventListener('change', function() {
     file = this.files[0];
     if (file) {
@@ -123,14 +103,16 @@ async function fetchAndDecode(url) {
         reader.readAsDataURL(blob);
     });
 }
-
-async function processData() {
+async function download() {
+    progress = 0
+    updateProgressBar(1)
     fileJson = JSON.parse(await readFile(file))
     fullFile = new Uint8Array(0)
     urls = fileJson["parts"]
     for (var item = 0; item < urls.length; item++) {
-        console.log(urls[item]["url"]);
+        console.log("Fetching URL: " + urls[item]["url"]);
         file = ""
+        mb_chunks = Math.ceil(urls[item]["size"] / 4000000)
         for (var mb_chunk = 0; mb_chunk < urls[item]["size"]; mb_chunk += 4000000) {
             if ((mb_chunk + 4000000) > urls[item]["size"]) {
                 end = urls[item]["size"]
@@ -140,7 +122,8 @@ async function processData() {
             response = await fetch(`/api/download/${urls[item]["url"]}?start=${String(mb_chunk)}&end=${String(end)}`)
             body = await response.text()
             file += body
-            console.log(body)
+            progress += (100 / (fileJson["parts"].length)) / (mb_chunks)
+            updateProgressBar(progress)
         }
         fullFile = appendBase64ToBytesArray(file, fullFile)
     }
