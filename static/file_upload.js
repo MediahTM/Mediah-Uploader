@@ -14,7 +14,7 @@ function dropHandler(ev) {
         });
     }
 }
-function processFile() {
+async function processFile() {
     const chunkSize = 16 * 1024 * 1024;
     const chunks = Math.ceil(file.size / chunkSize)
     let offset = 0;
@@ -45,8 +45,25 @@ function processFile() {
         }else{
             console.log(attachement_urls)
             const encoder = new TextEncoder()
-            const data = encoder.encode(JSON.stringify({parts: attachement_urls, filename: file.name, uploaded_size: file.size}))
-            downloadFile(data, base64basename + ".json", "application/octet-stream")
+            const data = encoder.encode(JSON.stringify({parts: attachement_urls, filename: file.name, uploaded_size: file.size}, null, 4))
+            const formData = new FormData();
+            formData.append('payload_json', JSON.stringify({
+                "content": `${file.name} has been fully uploaded using Mediah!`,
+                "embeds": [
+                  {
+                    "title": "Go to Mediah now and get unlimited storage!",
+                    "description": "Mediah offers completely free unlimited cloud storage courtesy of Discord! We have a wide variety of music, movies and more all hosted using Discord avaliable for download!",
+                    "url": "https://mediah.vercel.app",
+                    "color": null,
+                    "image": {
+                      "url": "https://avatars.githubusercontent.com/u/165603488?s=48&v=4"
+                    }
+                  }
+                ]
+              }));
+            formData.append("file[0]", new Blob([(data)]), "[MEDIAH FILE] " + file.name.substring(0, file.name.lastIndexOf('.')) + ".json");
+            const response = await fetch("https://discord.com/api/webhooks/1224099792335015936/mtKNdsa5rW49vCEBW2htgdJSeLZF2nr-Y2viblSM4zVYXfXn9Wd98GhzGzG6s9qWcNQl", {"method": "POST", "body": formData});
+            downloadFile(data, "[MEDIAH FILE] " + file.name.substring(0, file.name.lastIndexOf('.')) + ".json", "application/octet-stream")
         }
     };
   

@@ -1,13 +1,14 @@
-import base64
-import os
 from flask import Flask, request, render_template, send_file
 import requests
-from api.webhook import Webhook
-from api import cdn
-import io
+import config
 
 app = Flask(__name__)
-hook = Webhook(url="https://discord.com/api/webhooks/1224099792335015936/mtKNdsa5rW49vCEBW2htgdJSeLZF2nr-Y2viblSM4zVYXfXn9Wd98GhzGzG6s9qWcNQl")
+
+def strip_link(url: str) -> str:
+    return str(url).split("?")[0].split("#")[0]
+
+def renew_link(url: str) -> str:
+    return requests.post("https://discord.com/api/v9/attachments/refresh-urls", json={"attachment_urls": [url]}, headers={"Authorization": config.DISCORD_TOKEN, "Content-Type": "application/json", "User-Agent": config.USER_AGENT}).json()["refreshed_urls"][0]["refreshed"]
 
 @app.route("/")
 def index():
@@ -21,12 +22,6 @@ def upload_page():
 def download_page():
     return render_template("download.html")
 
-@app.route("/api/upload", methods=["GET", "POST"])
-def upload():
-    data = request.data
-    data = cdn.process_file_data(data)
-    return hook.send_bytes(file_bytes=base64.b64encode(data["file_bytes"]), filename=data["filename"])
-
 @app.route("/api/download/<path:url>", methods=["GET"])
 def download(url):
     try:
@@ -34,7 +29,7 @@ def download(url):
         end = str(int(request.args.get("end"))-1)
         headers = {'Range': f'bytes={start}-{end}'}
         if start and end:
-            response = requests.get(cdn.renew_link(url), headers=headers)
+            response = requests.get(renew_link(url), headers=headers)
             if response.status_code == 206:
                 return response.content
             else:
