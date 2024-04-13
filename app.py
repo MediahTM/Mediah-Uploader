@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, send_file
+from flask import Flask, request, render_template
 import requests
 import config
 
@@ -22,9 +22,10 @@ def upload_page():
 def download_page():
     return render_template("download.html")
 
-@app.route("/api/download/<path:url>", methods=["GET"])
-def download(url):
+@app.route("/api/download", methods=["GET"])
+def download():
     try:
+        url = request.args.get("url")
         start = request.args.get("start")
         end = str(int(request.args.get("end"))-1)
         headers = {'Range': f'bytes={start}-{end}'}
@@ -36,7 +37,7 @@ def download(url):
                 return (f"Error: {response.status_code} - {response.reason}")
         else:
             return "Add start/end arguments!"
-    except:
-        return "Add start/end arguments!"
+    except Exception as e:
+        return f"Exception in download: {e}"
 
-app.run(debug=True, port=80)
+app.run(debug=True, host="0.0.0.0", port=80)
