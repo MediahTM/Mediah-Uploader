@@ -1,11 +1,16 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>THIS IS TEMPORARY</title>
-</head>
-<body>
-    <h1>This is temporary i swear</h1>
-    <a href="/upload">CLICK ME FOR UPLOAD</a>
-    <a href="/download">CLICK ME FOR DOWNLOAD</a>
-</body>
-<html>
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="h-full flex gap-6 items-center flex-col justify-center">
+        <header class="flex flex-col items-center gap-2">
+            <img src="https://avatars.githubusercontent.com/u/165603488?s=200&v=4" class="w-[40px] rounded-md animate-bounce" alt="Mediah Logo">
+            <h1 class="text-2xl font-semibold">Mediah Server</h1>
+        </header>
+        <div class="flex flex flex-col gap-2">
+            <a href="/upload"
+                class="border-none w-full text-center justify-center outline-none rounded-full items-center bg-zinc-700 text-white text-base flex px-4 h-11 cursor-pointer hover:bg-zinc-600 transition-all">Uploader</a>
+            <a href="/download"
+                class="border-none w-full text-center justify-center outline-none rounded-full items-center bg-zinc-700 text-white text-base flex px-4 h-11 cursor-pointer hover:bg-zinc-600 transition-all">Downloader</a>
+        </div>
+    </div>
+{% endblock %}

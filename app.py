@@ -40,4 +40,4 @@ def download():
     except Exception as e:
         return f"Exception in download: {e}"
 
-app.run(debug=True, host="0.0.0.0", port=80)
+app.run(debug=True, host="0.0.0.0", port=6969)

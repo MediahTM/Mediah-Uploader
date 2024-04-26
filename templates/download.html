@@ -1,37 +1,37 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
-    <script src="https://cdn.filesizejs.com/filesize.min.js" defer></script>
-    <script>console.clear();console.log("Mediah Local Initialized...")</script>
-    <style>*{font-family: "Inter", sans-serif;color-scheme: dark !important;}</style>
-    <style>.text-bold{font-family: "Inter", sans-serif;color-scheme: dark !important;font-weight: 700;}</style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-    <title>Mediah</title>
-</head>
-<body class="flex h-screen flex-col text-white bg-zinc-900" id="dropContainer" ondrop="dropHandler(event);" ondragover="event.preventDefault();" ondragenter="dragEnterHandler(event);" ondragleave="dragLeaveHandler(event);">
-    <div class="flex h-screen justify-center items-center">
+{% extends "layout.html" %}
+
+{% block title %} - Downloader{% endblock %}
+
+{% block content %}
+    <div class="flex h-screen justify-center flex-col items-center">
+        <a href="/" class="w-8 h-8 bg-zinc-700 flex items-center justify-center my-2 rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+        </a>
         <div class="p-4 border-2 flex flex-col items-center justify-center gap-1 border-dashed border-zinc-700 rounded-md">
             <h1 class="text-4xl">Mediah Downloader</h1>
             <div class="flex items-center mt-2">
                 <div class="bg-zinc-500 rounded-full my-1 overflow-hidden w-[250px]" id="progress-container" hidden>
                     <p id="progress-text" class="px-1 absolute self-center w-[250px] text-center"></p>
-                    <div class="bg-green-500 rounded-l-full flex flex-col items-end transition-all h-[25px] w-[0px]" id="progress"></div>
+                    <div class="bg-green-500 rounded-l-full flex flex-col items-end transition-all h-[25px] w-[0px]"
+                        id="progress"></div>
                 </div>
                 <p id="browseText" class="px-2">Drag and drop JSON file or</p>
-                <label id="browseButton" class="border-none w-fit outline-none rounded-full bg-zinc-700 text-white text-base py-2 px-4 h-11 cursor-pointer hover:bg-zinc-600 transition-all" for="browse">Browse</label>
+                <label id="browseButton"
+                    class="border-none w-fit outline-none flex items-center rounded-full bg-zinc-700 text-white text-base py-2 px-4 h-11 cursor-pointer hover:bg-zinc-600 transition-all"
+                    for="browse">Browse</label>
             </div>
             <input type="file" class="hidden" id="browse" name="file" accept=".json">
             <input type="text" id="file_name" hidden name="file_name">
             <div id="fileNameContainer" class="flex items-center" hidden>
                 <p id="fileName" class="mb-1 px-1" hidden></p>
-                <label id="fileEditButton" class="border-none w-fit outline-none rounded-full bg-zinc-700 text-white text-base py-2 px-4 h-11 cursor-pointer hover:bg-zinc-600 transition-all" hidden for="browse">Edit</label>
+                <label id="fileEditButton"
+                    class="border-none w-fit outline-none rounded-full bg-zinc-700 text-white text-base py-2 px-4 h-11 cursor-pointer hover:bg-zinc-600 transition-all"
+                    hidden for="browse">Edit</label>
             </div>
-            <button id="download" onclick="download();" class="border-none w-fit outline-none rounded-full bg-zinc-700 text-white text-base py-2 px-4 h-11 cursor-pointer hover:bg-zinc-600 transition-all" hidden>Download!</button>
-            <script src="{{ url_for('static', filename='file_download.js' )}}" defer></script>
+            <button id="download" onclick="download();"
+                class="border-none w-fit outline-none rounded-full bg-zinc-700 text-white text-base py-2 px-4 h-11 cursor-pointer hover:bg-zinc-600 transition-all"
+                hidden>Download!</button>
         </div>
     </div>
-</body>
-</html>
+    <script src="{{ url_for('static', filename='file_download.js' )}}" defer></script>
+{% endblock %}
