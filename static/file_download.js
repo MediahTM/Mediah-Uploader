@@ -207,9 +207,9 @@ function showError(message) {
     document.body.appendChild(errorDiv);
 }
 var params = new URLSearchParams(window.location.search);
-var fileValue = params.get('file');
-if (fileValue) {
-    console.log(`Filename loaded from URL args: ${fileValue}`)
+var fileId = params.get('id');
+if (fileId) {
+    console.log(`File ID loaded from URL args: ${fileId}`)
     var xhr = new XMLHttpRequest()
     xhr.onreadystatechange = function() {
         json = JSON.parse(xhr.responseText)
@@ -222,6 +222,6 @@ if (fileValue) {
         file = new File([new Blob([xhr.responseText], { type: 'application/json' })], baseFileName+'.json', { type: 'application/json'});
         handleFileInput(file);
     }
-    xhr.open("GET", "https://mediah.vercel.app/api/get_file?collection=files&name=" + fileValue, false)
+    xhr.open("GET", "https://mediah.vercel.app/api/get_file?collection=files&name=" + fileId, false)
     xhr.send()
 }

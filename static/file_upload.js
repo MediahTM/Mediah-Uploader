@@ -119,8 +119,14 @@ async function processFile() {
             if (Object.keys(output_json).length > 0) {
                 xhr = new XMLHttpRequest()
                 xhr.open("POST", `https://mediah.vercel.app/api/new_file?collection=files&name=${file.name}`, true)
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4) {
+                        var response = JSON.parse(xhr.responseText)
+                        console.log(response)
+                        notification("Your file has been uploaded!", "Your file is now on the Mediah servers. To share it with others, simply send them the link below!", "https://mediah.vercel.app/download?id="+response["id"])
+                    }
+                }
                 xhr.send(JSON.stringify({ parts: attachement_urls, filename: file.name, uploaded_size: file.size }, null, 4))
-                notification("Your file has been uploaded!", "Your file is now on the Mediah servers. To share it with others, simply use the link below!", "https://mediah.vercel.app/download?file="+file.name)
             }
             uploading = false;
         }
