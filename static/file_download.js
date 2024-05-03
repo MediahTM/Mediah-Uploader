@@ -42,10 +42,14 @@ function dragLeaveHandler(ev) {
         dropOverGui = false;
     }
 }
-function handleFileInput(file) {
+async function handleFileInput(file) {
     if (file.name.substring(file.name.lastIndexOf('.'), file.name.length) === ".json") {
         console.log(file)
-        getTruncatedFileName();
+        fileJson = JSON.parse(await readFile(file))
+        fileInfo = await fetch(`/api/file_info?type=${fileJson["filename"].substring(fileJson["filename"].lastIndexOf('.')+1, fileJson["filename"].length)}`)
+        fileInfo = await fileInfo.json()
+        console.log(file.name)
+        getTruncatedFileName(fileJson["filename"]);
         hideBrowse()
     } else {
         file = ""
@@ -68,13 +72,13 @@ document.getElementById('fileEditButton').addEventListener('change', function ()
         unhideBrowse()
     }
 });
-function getTruncatedFileName() {
-    if (file.name.length > 20) {
+function getTruncatedFileName(name) {
+    if (name.length > 20) {
         var truncated = ".."
     } else {
         var truncated = ""
     }
-    truncatedFileName = file.name.substring(0, file.name.lastIndexOf('.')).substring(0, 20) + truncated + file.name.substring(file.name.lastIndexOf('.'), file.length).substring(0, 10);
+    truncatedFileName = name.substring(0, name.lastIndexOf('.')).substring(0, 20) + truncated + name.substring(name.lastIndexOf('.'), name.length).substring(0, 10);
 }
 function readFile(file) {
     return new Promise((resolve, reject) => {
@@ -90,28 +94,16 @@ function readFile(file) {
     });
 }
 function hideBrowse() {
-    document.getElementById("fileNameContainer").hidden = false;
-    document.getElementById("fileName").hidden = false;
+    document.getElementById("progress-container").hidden = true;
+    document.getElementById("download-buttons").classList.remove("hidden");
+    document.getElementById("browse-menu").classList.add("hidden");
+    document.getElementById("file-menu").classList.remove("hidden");
     document.getElementById("fileName").textContent = truncatedFileName;
-    document.getElementById("fileEditButton").hidden = false;
-    document.getElementById("download").hidden = false;
-    document.getElementById("browseButton").hidden = true;
-    document.getElementById("browseButton").classList.add("hidden");
-    document.getElementById("browseText").hidden = true;
+    document.getElementById("fileImage").src = fileInfo["image"];
 }
 function unhideBrowse() {
-    document.getElementById("progress-container").hidden = true;
-    document.getElementById("browseButton").hidden = false;
-    document.getElementById("browseText").hidden = false;
-    document.getElementById("download").hidden = true;
-    document.getElementById("fileName").hidden = true;
-    document.getElementById("fileNameContainer").hidden = true;
-    document.getElementById("fileName").hidden = true;
-    document.getElementById("fileEditButton").hidden = true;
-    document.getElementById("download").hidden = true;
-    document.getElementById("browseButton").hidden = false;
-    document.getElementById("browseButton").classList.remove("hidden");
-    document.getElementById("browseText").hidden = false;
+    document.getElementById("browse-menu").classList.remove("hidden");
+    document.getElementById("file-menu").classList.add("hidden");
 }
 function base64DecodeToBytes(base64String) {
     var binaryString = atob(base64String);
@@ -123,12 +115,9 @@ function base64DecodeToBytes(base64String) {
 }
 function updateProgressBar(progress) {
     document.getElementById("progress-container").hidden = false;
-    document.getElementById("browse").hidden = true;
-    document.getElementById("fileEditButton").hidden = true;
-    document.getElementById("fileName").textContent = "Downloading: " + truncatedFileName;
-    document.getElementById("download").hidden = true;
     document.getElementById("progress").style.width = progress * 2.5;
-    document.getElementById("progress-text").textContent = String(Math.round(progress)) + "%"
+    document.getElementById("progress-text").textContent = String(Math.round(progress)) + "%";
+    document.getElementById("download-buttons").classList.add("hidden");
     if (progress >= 100) {
         unhideBrowse();
     }
@@ -163,7 +152,7 @@ async function download() {
         console.log("Fetching URL: " + urls[item]["url"]);
         const fileSize = urls[item]["size"];
         let start = 0;
-        const chunkSize = 4000000; // 4MB
+        const chunkSize = 4000000;
         while (start < fileSize) {
             const end = Math.min(start + chunkSize, fileSize);
             const body = await downloadFilePart(urls[item]["url"], start, end);
@@ -183,7 +172,7 @@ async function download() {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-    hideProgessBar();
+    unhideBrowse();
     downloading = false;
 }
 function base64ToArrayBuffer(base64) {
@@ -212,11 +201,11 @@ if (fileId) {
     console.log(`File ID loaded from URL args: ${fileId}`)
     var xhr = new XMLHttpRequest()
     xhr.onreadystatechange = function() {
-        json = JSON.parse(xhr.responseText)
+        fileJson = JSON.parse(xhr.responseText)
         if (json["filename"].includes(".")) {
-            baseFileName = json["filename"].substring(0, json["filename"].lastIndexOf('.'))
+            baseFileName = fileJson["filename"].substring(0, json["filename"].lastIndexOf('.'))
         }else{
-            baseFileName = json["filename"]
+            baseFileName = fileJson["filename"]
         }
         console.log(`JSON file loaded: ${xhr.responseText}`);
         file = new File([new Blob([xhr.responseText], { type: 'application/json' })], baseFileName+'.json', { type: 'application/json'});
