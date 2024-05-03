@@ -72,7 +72,12 @@ async function handleFileInput(file) {
         xhr.send() 
         while (true) {
             try{
-                fileImage = filetypeicons[fileTypes[fileJson["filename"].substring(fileJson["filename"].lastIndexOf('.')+1, fileJson["filename"].length)]]
+                if (filetypeicons[fileTypes[fileJson["filename"].substring(fileJson["filename"].lastIndexOf('.')+1, fileJson["filename"].length)]]) {
+                    fileImage = filetypeicons[fileTypes[fileJson["filename"].substring(fileJson["filename"].lastIndexOf('.')+1, fileJson["filename"].length)]]
+                }
+                else{
+                    fileImage = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-20 h-20"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>`
+                }
                 break;
             }catch{
                 await new Promise(r => setTimeout(r, 100));
