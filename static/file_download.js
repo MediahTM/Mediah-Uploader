@@ -2,6 +2,22 @@ var file = ""
 var dropOverGui = false;
 let dragCounter = 0;
 let downloading = false;
+let fileTypes;
+
+var filetypeicons = {
+    "audio": `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-20 h-20"><path d="M17.5 22h.5a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v3"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M2 19a2 2 0 1 1 4 0v1a2 2 0 1 1-4 0v-4a6 6 0 0 1 12 0v4a2 2 0 1 1-4 0v-1a2 2 0 1 1 4 0"/></svg>`,
+    "image": `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-20 h-20"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><circle cx="10" cy="12" r="2"/><path d="m20 17-1.296-1.296a2.41 2.41 0 0 0-3.408 0L9 22"/></svg>`,
+    "3d": `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-20 h-20"><path d="M14.5 22H18a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v4"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M3 13.1a2 2 0 0 0-1 1.76v3.24a2 2 0 0 0 .97 1.78L6 21.7a2 2 0 0 0 2.03.01L11 19.9a2 2 0 0 0 1-1.76V14.9a2 2 0 0 0-.97-1.78L8 11.3a2 2 0 0 0-2.03-.01Z"/><path d="M7 17v5"/><path d="M11.7 14.2 7 17l-4.7-2.8"/></svg>`,
+    "video": `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-20 h-20"><path d="M4 22h14a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v4"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><rect width="8" height="6" x="2" y="12" rx="1"/><path d="m10 15.5 4 2.5v-6l-4 2.5"/></svg>`,
+    "spreadsheet": `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-20 h-20"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M8 13h2"/><path d="M14 13h2"/><path d="M8 17h2"/><path d="M14 17h2"/></svg>`,
+    "database": `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-20 h-20"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg>`,
+    "executable": `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-20 h-20"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="m8 16 2-2-2-2"/><path d="M12 18h4"/></svg>`,
+    "game": `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-20 h-20"><path d="M21 17a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2Z"/><path d="M6 15v-2"/><path d="M12 15V9"/><circle cx="12" cy="6" r="3"/></svg>`,
+    "code": `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-20 h-20"><path d="M10 12.5 8 15l2 2.5"/><path d="m14 12.5 2 2.5-2 2.5"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/></svg>`,
+    "certificate": `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-20 h-20"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><circle cx="10" cy="16" r="2"/><path d="m16 10-4.5 4.5"/><path d="m15 11 1 1"/></svg>`,
+    "text": `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-20 h-20"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>`,
+}
+
 function dropHandler(ev) {
     ev.preventDefault();
     if (ev.dataTransfer.items) {
@@ -46,8 +62,22 @@ async function handleFileInput(file) {
     if (file.name.substring(file.name.lastIndexOf('.'), file.name.length) === ".json") {
         console.log(file)
         fileJson = JSON.parse(await readFile(file))
-        fileInfo = await fetch(`/api/file_info?type=${fileJson["filename"].substring(fileJson["filename"].lastIndexOf('.')+1, fileJson["filename"].length)}`)
-        fileInfo = await fileInfo.json()
+        xhr = new XMLHttpRequest()
+        xhr.open("GET", "/static/filetype.json")
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4) {
+                fileTypes = JSON.parse(xhr.responseText)
+            }
+        }
+        xhr.send() 
+        while (true) {
+            try{
+                fileImage = filetypeicons[fileTypes[fileJson["filename"].substring(fileJson["filename"].lastIndexOf('.')+1, fileJson["filename"].length)]]
+                break;
+            }catch{
+                await new Promise(r => setTimeout(r, 100));
+            }
+        }
         console.log(file.name)
         getTruncatedFileName(fileJson["filename"]);
         hideBrowse()
@@ -57,14 +87,6 @@ async function handleFileInput(file) {
     }
 }
 document.getElementById('browse').addEventListener('change', function () {
-    file = this.files[0];
-    if (file) {
-        handleFileInput(file)
-    } else {
-        unhideBrowse()
-    }
-});
-document.getElementById('fileEditButton').addEventListener('change', function () {
     file = this.files[0];
     if (file) {
         handleFileInput(file)
@@ -99,7 +121,7 @@ function hideBrowse() {
     document.getElementById("browse-menu").classList.add("hidden");
     document.getElementById("file-menu").classList.remove("hidden");
     document.getElementById("fileName").textContent = truncatedFileName;
-    document.getElementById("fileImage").src = fileInfo["image"];
+    document.getElementById("fileImage").innerHTML = fileImage;
 }
 function unhideBrowse() {
     document.getElementById("browse-menu").classList.remove("hidden");
@@ -201,15 +223,17 @@ if (fileId) {
     console.log(`File ID loaded from URL args: ${fileId}`)
     var xhr = new XMLHttpRequest()
     xhr.onreadystatechange = function() {
-        fileJson = JSON.parse(xhr.responseText)
-        if (json["filename"].includes(".")) {
-            baseFileName = fileJson["filename"].substring(0, json["filename"].lastIndexOf('.'))
-        }else{
-            baseFileName = fileJson["filename"]
+        if (xhr.readyState === 4) {
+            fileJson = JSON.parse(xhr.responseText)
+            if (fileJson["filename"].includes(".")) {
+                baseFileName = fileJson["filename"].substring(0, fileJson["filename"].lastIndexOf('.'))
+            }else{
+                baseFileName = fileJson["filename"]
+            }
+            console.log(`JSON file loaded: ${xhr.responseText}`);
+            file = new File([new Blob([xhr.responseText], { type: 'application/json' })], baseFileName+'.json', { type: 'application/json'});
+            handleFileInput(file);
         }
-        console.log(`JSON file loaded: ${xhr.responseText}`);
-        file = new File([new Blob([xhr.responseText], { type: 'application/json' })], baseFileName+'.json', { type: 'application/json'});
-        handleFileInput(file);
     }
     xhr.open("GET", "https://mediah.vercel.app/api/get_file?collection=files&name=" + fileId, false)
     xhr.send()

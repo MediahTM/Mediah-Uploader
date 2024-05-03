@@ -7,7 +7,6 @@
         <a href="/" class="w-8 h-8 bg-zinc-700 flex items-center justify-center my-2 rounded-full">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
         </a>
-        <!-- FILE BROWSE -->
         <div id="browse-menu" class="p-4 border-2 flex flex-col items-center justify-center gap-1 border-dashed border-zinc-700 rounded-md">
             <h1 class="text-3xl">Mediah Downloader</h1>
             <div class="flex items-center mt-2">
@@ -19,21 +18,22 @@
             <input type="file" class="hidden" id="browse" name="file" accept=".json">
             <input type="text" id="file_name" hidden name="file_name">
         </div>
-        <!-- FILE HAS BEEN INPUTTED -->
         <div id="file-menu" class="p-4 border-2 flex flex-col items-center justify-center gap-1 border-dashed border-zinc-700 rounded-md hidden">
-            <h1 class="text-3xl">Mediah Downloader</h1>
+            <h1 class="text-3xl mb-2">Mediah Downloader</h1>
             <div class="w-[100%] flex justify-start items-center">
                 <div class="flex flex-col items-center">
-                    <img class="w-24" id="fileImage" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAAB9UlEQVR4nO3YsUkFURCF4Q21KavQsvQtZgaibcgTzIQdA0ErGKxB8DzBFXPNhHNn9j8wDfwfN7nTxBhjjDHGBtxuOZzMi/b17uP65mE9mrptXnQ2h9aKtwvdnT+ux1OnVQaZO6JUA7l5OfRGqQby8Pa53udnX5SKIPn+1RelKkh2RakMkh1RqoNkN5QOINkJpQtIdkHpBJIdULqBZHWUjiBZGaUrSFZF6QySFVG6g2Q1lC2AZCWUrYBkFZQtgWQFlK2B5OgoWwTJP1Aunj5O3R6bBcnfUBaduT3KgVw9H9bb1/+7yydA1mGPFyI/AiDyhwdE/tiAyB8YEPmjAjJAyADEHy8A8QcLQPyRAhB/mADEHyMGOL5O5EcARP7wgMgfGxD5AwMif1RABggZgPjjBSD+YAGIP1IA4g8TgPhjxADH14n8CIDIHx4Q+WMDIn9gQOSPCsgAIQMQf7wAxB8sAPFHCkD8YQIQf4wY4Pg6kR8BEPnDAyJ/bEDkDwyI/FEBGSBkAOKPF4D4gwUg/kgBiD9MAOKPEQMcXyfyIwAif3hA5I8NiPyBAZE/KiADhAxA/PECEH+wAMQfKQDxhwlA/DFigOPrRH4EQOQPD4j8sQGRPzAg8kcFZICQAYg/XjQF2S2Hk3nRntP+p4XbgzHGGGOMTb/sG3hAqs+uZ65xAAAAAElFTkSuQmCC">
+                    <div id="fileImage"></div>
                     <p id="fileName" class="max-w-32 whitespace-normal break-all text-center"></p>
                 </div>
                 <div class="bg-zinc-500 rounded-full my-1 overflow-hidden w-[250px]" id="progress-container" hidden>
                     <p id="progress-text" class="px-1 absolute self-center w-[250px] text-center"></p>
                     <div class="bg-green-500 rounded-l-full flex flex-col items-end transition-all h-[25px] w-[0px]" id="progress"></div>
                 </div>
-                <div id="download-buttons" class="w-[250px] flex items-center">
+                <div id="download-buttons" class="w-[250px] justify-center flex items-center">
                     <button id="download" onclick="download();" class="border-none w-fit outline-none rounded-full bg-zinc-700 text-white text-base py-2 px-4 h-11 cursor-pointer hover:bg-zinc-600 transition-all ml-4">Download</button>
-                    <button id="clear" onclick="unhideBrowse();" class="border-none w-fit outline-none rounded-full bg-zinc-700 text-white text-base py-2 px-4 h-11 cursor-pointer hover:bg-zinc-600 transition-all ml-4">Clear</button>
+                    <button id="clear" onclick="unhideBrowse();" class="border-none outline-none rounded-full bg-red-700 text-white text-base w-11 flex items-center justify-center h-11 cursor-pointer hover:bg-red-600 transition-all ml-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    </button>
                 </div>
             </div>
         </div>
